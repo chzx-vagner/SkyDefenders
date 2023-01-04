@@ -13,6 +13,7 @@ screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 speed = 2
 FPS = 60
+sbito = 0
 health = 100
 
 
