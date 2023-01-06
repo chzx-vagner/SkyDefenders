@@ -73,7 +73,7 @@ class PPOrocket(pygame.sprite.Sprite):
         self.image = PPOrocket.image
         self.rect = self.image.get_rect()
         self.rect.x = 300
-        self.rect.bottom = 800
+        self.rect.bottom = height
         print(s, 'dddd')
 
     def update(self, *args):
@@ -99,9 +99,9 @@ class BTR(pygame.sprite.Sprite):
         super().__init__(all_sprites)
         self.image = BTR.image
         self.rect = self.image.get_rect()
-        self.rect.x = random.randrange(800)
+        self.rect.x = random.randrange(width)
         self.rect.y = 532
-        self.rect.bottom = 600
+        self.rect.bottom = height
         self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
