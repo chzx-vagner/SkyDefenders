@@ -29,6 +29,7 @@ def load_image(name, colorkey=None):
     return image
 
 
+afghan = load_image('afghan.png')
 all_sprites = pygame.sprite.Group()
 
 
@@ -55,16 +56,45 @@ class PPO(pygame.sprite.Sprite):
         if not pygame.sprite.collide_mask(self, rocket):
             self.rect.y -= self.prospeed
             self.rect.x += self.prospeed // 2
-        else:
+        '''else:
             self.image = self.image_boom
             self.rect.y = 10000
             self.rect.x = 10000
-            print(health, 'PPO PRUZUE!')
+            print(health, 'PPO PRUZUE!')'''
         if prohodov == 10:
             self.kill()
 
 
 protivorocket = PPO()
+
+
+class PPOrocket(pygame.sprite.Sprite):
+    image = load_image("missle.png")
+    image_boom = load_image("boom.png")
+
+    def __init__(self, *args):
+        super().__init__(all_sprites)
+        global s
+        self.image = PPOrocket.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 300
+        self.rect.bottom = 800
+        print(s, 'dddd')
+
+    def update(self, *args):
+        self.prospeed = 3
+        self.rect.y += self.prospeed
+        if not pygame.sprite.collide_mask(self, rocket):
+            self.rect.y += self.prospeed
+            self.rect.x += self.prospeed // 2
+        else:
+            self.image = self.image_boom
+            print(health, 'PPO PRUZUE!')
+        if prohodov == 10:
+            self.kill()
+
+
+pporocket = PPOrocket()
 
 
 class BTR(pygame.sprite.Sprite):
@@ -197,6 +227,7 @@ def draw(screen):
 def main():
     timed = (1, 150, 200, 999, 580, 600, 320)
     pygame.display.set_caption("SkyDefenders 0.0.0.0.1")
+    screen.blit(afghan, (0, 0))
     running = True
     global health
     global s
@@ -211,7 +242,7 @@ def main():
             else:
                 draw(screen)
         clock.tick(FPS)
-        screen.fill(pygame.Color('white'))
+        screen.blit(afghan, (0, 0))
         all_sprites.draw(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
