@@ -9,7 +9,6 @@ import random
 pygame.init()
 size = width, height = 800, 600
 screen = pygame.display.set_mode(size)
-'''screen.fill(pygame.Color('white'))'''
 clock = pygame.time.Clock()
 speed = 2
 FPS = 60
@@ -49,6 +48,7 @@ class PPO(pygame.sprite.Sprite):
         global health
         global popadania
         global prohodov
+
         self.rect.centerx = s[0]
         self.rect.centery = s[1]
         self.prospeed = 3
@@ -56,11 +56,6 @@ class PPO(pygame.sprite.Sprite):
         if not pygame.sprite.collide_mask(self, rocket):
             self.rect.y -= self.prospeed
             self.rect.x += self.prospeed // 2
-        '''else:
-            self.image = self.image_boom
-            self.rect.y = 10000
-            self.rect.x = 10000
-            print(health, 'PPO PRUZUE!')'''
         if prohodov == 10:
             self.kill()
 
@@ -136,11 +131,16 @@ btr = BTR()
 
 class Missles(pygame.sprite.Sprite):
     image = load_image("missle.png")
+    image_bomb = load_image('bomb.png')
     image_boom = load_image('boom.png')
 
     def __init__(self):
         super().__init__(all_sprites)
-        self.image = Missles.image
+        self.ab = random.randint(-2, 2)
+        if self.ab > 0:
+            self.image = Missles.image
+        else:
+            self.image = Missles.image_bomb
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = random.randint(0, 704)
@@ -150,10 +150,14 @@ class Missles(pygame.sprite.Sprite):
         global speed
         global health
         global popadania
-        self.bombspeed = 6
+        if self.ab > 0:
+            self.bombspeed = 8
+        else:
+            self.bombspeed = 4
         if not pygame.sprite.collide_mask(self, btr):
             self.rect.y += self.bombspeed
-            self.rect.x += self.bombspeed // 3
+            if self.ab > 0:
+                self.rect.x += self.bombspeed // 2
             if pygame.sprite.collide_mask(self, protivorocket):
                 self.image = self.image_boom
                 self.rect.y = 10000
@@ -168,46 +172,6 @@ class Missles(pygame.sprite.Sprite):
 
 
 rocket = Missles()
-
-
-'''class Landing(pygame.sprite.Sprite):
-    image = load_image("missle.png")
-    image_boom = load_image('boom.png')
-
-    def __init__(self, pos):
-        super().__init__(all_sprites)
-        self.image = Landing.image
-        self.rect = self.image.get_rect()
-        # вычисляем маску для эффективного сравнения
-        self.mask = pygame.mask.from_surface(self.image)
-        self.rect.x = pos[0]
-        self.rect.y = pos[1]
-
-    def update(self):
-        bombspeed = 3
-        if self.rect.y >= 600:
-            self.image = self.image_boom
-        if not pygame.sprite.collide_mask(self, mountain):
-            self.rect.y += bombspeed
-        else:
-            self.image = self.image_boom
-            global speed
-            speed = 0'''
-
-
-print(all_sprites)
-
-
-'''class Boom(pygame.sprite.Sprite):
-    image = load_image("boom.png")
-
-    def __init__(self, group, *args):
-        super().__init__(group)
-        self.image = Boom.image
-        self.rect = self.image.get_rect()
-        self.rect.x = args[0]
-        print(args[0])
-        self.rect.y = args[1]'''
 
 
 def draw(screen):
