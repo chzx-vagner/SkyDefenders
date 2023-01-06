@@ -33,7 +33,7 @@ all_sprites = pygame.sprite.Group()
 
 
 class PPO(pygame.sprite.Sprite):
-    image = load_image("bomb.png")
+    image = load_image("cross.png")
     image_boom = load_image("boom.png")
 
     def __init__(self, *args):
@@ -48,8 +48,8 @@ class PPO(pygame.sprite.Sprite):
         global health
         global popadania
         global prohodov
-        self.rect.x = s[0]
-        self.rect.y = s[1]
+        self.rect.centerx = s[0]
+        self.rect.centery = s[1]
         self.prospeed = 3
         self.rect.y -= self.prospeed
         if not pygame.sprite.collide_mask(self, rocket):
