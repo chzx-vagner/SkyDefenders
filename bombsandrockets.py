@@ -17,7 +17,7 @@ sbito = 0
 health = 100
 prohodov = 0
 popadania = 0
-s = (0, 0)
+s = (-1000, -1000)
 
 
 def load_image(name, colorkey=None):
@@ -123,6 +123,7 @@ class Missles(pygame.sprite.Sprite):
         self.bombspeed = 6
         if not pygame.sprite.collide_mask(self, btr):
             self.rect.y += self.bombspeed
+            self.rect.x += self.bombspeed // 3
             if pygame.sprite.collide_mask(self, protivorocket):
                 self.image = self.image_boom
                 self.rect.y = 10000
