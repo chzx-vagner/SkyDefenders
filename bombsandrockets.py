@@ -7,7 +7,7 @@ pygame.init()
 size = width, height = 800, 600
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
-speed = 3
+speed = 2
 FPS = 60
 sbito = 0
 health = 100
@@ -81,8 +81,10 @@ class BTR(pygame.sprite.Sprite):
             if health != 0:
                 self.rect.right = width
                 self.rect.y = 532
-                speed = 3
+                speed = 2
             else:
+                self.rect.x = 10000
+                self.rect.y = 10000
                 self.kill()
                 print('tested')
         if self.rect.left <= 0:
@@ -142,7 +144,7 @@ rocket = Missles()
 
 
 def main():
-    timed = (1, 150, 200, 999, 580, 600, 320)
+    timed = (1, 20, 97, 444, 413, 876, 150, 200, 999)
     pygame.display.set_caption("SkyDefenders 0.0.0.0.1")
     screen.blit(afghan, (0, 0))
     running = True
@@ -150,6 +152,7 @@ def main():
     global cross
     global prohodov
     global sbito
+    global popadania
     while running:
         if health != 0:
             if prohodov != 10:
@@ -157,6 +160,8 @@ def main():
                 '''print(a)'''
                 if a in timed:
                     Missles()
+        if popadania > 10:
+            popadania = 10
         clock.tick(FPS)
         screen.blit(afghan, (0, 0))
         all_sprites.draw(screen)
@@ -171,11 +176,11 @@ def main():
         uspeh = font.render(f'Успешно: {prohodov}', False, (0, 0, 0))
         finalpopad = font.render(f'Вы проиграли! Попаданий: {popadania}', False, (0, 0, 0))
         victory = font.render(f'Вы выиграли!', False, (0, 0, 0))
-        if health != 0:
+        if health > 0 and prohodov != 10:
             screen.blit(popad, (0, 0))
             screen.blit(sbit, (0, 25))
             screen.blit(uspeh, (0, 50))
-        else:
+        elif health <= 0 and prohodov != 10:
             screen.blit(finalpopad, (width // 2, height // 2))
         if prohodov == 10:
             screen.blit(victory, (screen.get_rect().centerx, screen.get_rect().centery))
@@ -184,6 +189,7 @@ def main():
         pygame.display.flip()
     pygame.quit()
     print(sbito)
+
 
 if __name__ == '__main__':
     sys.exit(main())
