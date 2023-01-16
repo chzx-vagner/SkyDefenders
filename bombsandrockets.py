@@ -151,7 +151,7 @@ rocket = Missles()
 
 def main():
     timed = (1, 20, 97, 444, 413, 876, 150, 200, 999)
-    pygame.display.set_caption("SkyDefenders 0.0.0.0.1")
+    pygame.display.set_caption("SkyDefenders 0.1 Open Alpha")
     screen.blit(afghan, (0, 0))
     running = True
     global health
