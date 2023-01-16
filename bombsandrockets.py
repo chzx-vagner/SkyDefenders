@@ -75,6 +75,7 @@ class BTR(pygame.sprite.Sprite):
         global health
         global speed
         global prohodov
+        global popadania
         self.rect.x -= speed
         self.coords = self.rect.x, self.rect.y
         if speed == 0:
@@ -93,6 +94,11 @@ class BTR(pygame.sprite.Sprite):
             print(prohodov)
             if prohodov == 10:
                 self.kill()
+        if pygame.sprite.collide_mask(self, protivorocket):
+            health -= 10
+            print('НЕ СТРЕЛЯЙ ПО СВОИМ!')
+            popadania += 1
+            speed = 0
 
 
 btr = BTR()
