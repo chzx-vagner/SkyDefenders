@@ -13,6 +13,8 @@ sbito = 0
 health = 100
 prohodov = 0
 popadania = 0
+ppo_pos = False
+flag = 0
 cross = (-1000, -1000)
 font = pygame.font.SysFont('Calibri', 30)
 
@@ -61,6 +63,7 @@ protivorocket = PPO()
 
 class BTR(pygame.sprite.Sprite):
     image = load_image("btr.png")
+    image_boom = load_image("boom.png")
 
     def __init__(self):
         super().__init__(all_sprites)
@@ -75,6 +78,7 @@ class BTR(pygame.sprite.Sprite):
         global health
         global speed
         global prohodov
+        global popadania
         self.rect.x -= speed
         self.coords = self.rect.x, self.rect.y
         if speed == 0:
@@ -93,9 +97,55 @@ class BTR(pygame.sprite.Sprite):
             print(prohodov)
             if prohodov == 10:
                 self.kill()
+        if pygame.sprite.collide_mask(self, protivorocket):
+            health -= 10
+            print('НЕ СТРЕЛЯЙ ПО СВОИМ!') 
+            popadania += 1
+            speed = 0
 
 
 btr = BTR()
+
+
+class PVOSys(pygame.sprite.Sprite):
+    image = load_image("ppo.png")
+    image_boom = load_image("boom.png")
+
+    def __init__(self):
+        super().__init__(all_sprites)
+        self.image = PVOSys.image
+        self.rect = self.image.get_rect()
+        self.rect.x = width // 2
+        self.rect.y = 532
+        self.rect.bottom = height
+        self.mask = pygame.mask.from_surface(self.image)
+
+    def update(self):
+        global health
+        global flag
+        global popadania
+        global ppo_pos
+        if health != 0 and prohodov != 10:
+            if flag == -1:
+                self.rect.x -= 1
+            elif flag == 1:
+                self.rect.x += 1
+            if self.rect.left <= 0:
+                health = 0
+                ppo_pos = True
+            if self.rect.right >= width:
+                health = 0
+                ppo_pos = True
+        else:
+            self.rect.x = 10000
+            self.rect.y = 10000
+            self.kill()
+        if pygame.sprite.collide_mask(self, protivorocket):
+            print('НЕ СТРЕЛЯЙ ПО СВОИМ!')
+            health = 0
+
+
+pvo = PVOSys()
 
 
 class Missles(pygame.sprite.Sprite):
@@ -116,18 +166,27 @@ class Missles(pygame.sprite.Sprite):
         self.rect.y = 0
 
     def update(self):
-        global speed
         global health
         global sbito
+        global speed
         global popadania
+        global pvo_alive
         if self.ab > 0:
             self.bombspeed = 8
         else:
             self.bombspeed = 4
         if not pygame.sprite.collide_mask(self, btr):
             self.rect.y += self.bombspeed
+            if self.rect.bottom == height:
+                self.image = self.image_boom
             if self.ab > 0:
                 self.rect.x += self.bombspeed // 2
+            if pygame.sprite.collide_mask(self, pvo):
+                self.image = self.image_boom
+                health = 0
+                pvo_alive = 0
+                speed = 0
+                popadania += 1
             if pygame.sprite.collide_mask(self, protivorocket):
                 self.image = self.image_boom
                 sbito += 1
@@ -145,19 +204,19 @@ rocket = Missles()
 
 def main():
     timed = (1, 20, 97, 444, 413, 876, 150, 200, 999)
-    pygame.display.set_caption("SkyDefenders 0.0.0.0.1")
+    pygame.display.set_caption("SkyDefenders 0.2 Open Alpha")
     screen.blit(afghan, (0, 0))
     running = True
     global health
     global cross
     global prohodov
     global sbito
+    global flag
     global popadania
     while running:
         if health != 0:
             if prohodov != 10:
                 a = random.randint(0, 1000)
-                '''print(a)'''
                 if a in timed:
                     Missles()
         if popadania > 10:
@@ -168,6 +227,13 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    flag = -1
+                if event.key == pygame.K_RIGHT:
+                    flag = 1
+                if event.key == pygame.K_DOWN:
+                    flag = 0
             if event.type == pygame.MOUSEBUTTONDOWN:
                 cross = event.pos
         all_sprites.update()
@@ -175,17 +241,20 @@ def main():
         sbit = font.render(f'Сбито: {sbito}', False, (0, 0, 0))
         uspeh = font.render(f'Успешно: {prohodov}', False, (0, 0, 0))
         finalpopad = font.render(f'Вы проиграли! Попаданий: {popadania}', False, (0, 0, 0))
+        zrada = font.render('А кто Родину защищать будет?', False, (255, 0, 0))
         victory = font.render(f'Вы выиграли!', False, (0, 0, 0))
         if health > 0 and prohodov != 10:
             screen.blit(popad, (0, 0))
             screen.blit(sbit, (0, 25))
             screen.blit(uspeh, (0, 50))
         elif health <= 0 and prohodov != 10:
-            screen.blit(finalpopad, (width // 2, height // 2))
+            screen.blit(finalpopad, (width // 4, height // 2))
         if prohodov == 10:
             screen.blit(victory, (screen.get_rect().centerx, screen.get_rect().centery))
-            screen.blit(popad, (width // 2, height // 2 + 25))
-            screen.blit(sbit, (width // 2, height // 2 + 50))
+            screen.blit(popad, (width // 4, height // 2 + 25))
+            screen.blit(sbit, (width // 4, height // 2 + 50))
+        if ppo_pos == True:
+            screen.blit(zrada, (width // 4, 100))
         pygame.display.flip()
     pygame.quit()
     print(sbito)
